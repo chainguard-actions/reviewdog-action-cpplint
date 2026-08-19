@@ -1,0 +1,69 @@
+name: Test cpplint with specific file targets
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create C++ header and source files for linting
+        run: |
+          mkdir -p tests/fixtures/cpp-targets
+          cat > tests/fixtures/cpp-targets/mylib.h << 'EOF'
+          // Copyright 2024 Test Author. All Rights Reserved.
+          //
+          // Licensed under the Apache License, Version 2.0 (the "License");
+          // you may not use this file except in compliance with the License.
+          // You may obtain a copy of the License at
+          //
+          //     http://www.apache.org/licenses/LICENSE-2.0
+          //
+          // Unless required by applicable law or agreed to in writing, software
+          // distributed under the License is distributed on an "AS IS" BASIS,
+          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+          // See the License for the specific language governing permissions and
+          // limitations under the License.
+
+          #ifndef TESTS_FIXTURES_CPP_TARGETS_MYLIB_H_
+          #define TESTS_FIXTURES_CPP_TARGETS_MYLIB_H_
+
+          int add(int a, int b);
+
+          #endif  // TESTS_FIXTURES_CPP_TARGETS_MYLIB_H_
+          EOF
+
+          cat > tests/fixtures/cpp-targets/mylib.cpp << 'EOF'
+          // Copyright 2024 Test Author. All Rights Reserved.
+          //
+          // Licensed under the Apache License, Version 2.0 (the "License");
+          // you may not use this file except in compliance with the License.
+          // You may obtain a copy of the License at
+          //
+          //     http://www.apache.org/licenses/LICENSE-2.0
+          //
+          // Unless required by applicable law or agreed to in writing, software
+          // distributed under the License is distributed on an "AS IS" BASIS,
+          // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+          // See the License for the specific language governing permissions and
+          // limitations under the License.
+
+          #include "tests/fixtures/cpp-targets/mylib.h"
+
+          int add(int a, int b) {
+            return a + b;
+          }
+          EOF
+
+      - id: action
+        uses: .
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: local
+          level: warning
+          flags: '--extensions=h,cpp'
+          targets: 'tests/fixtures/cpp-targets/mylib.h tests/fixtures/cpp-targets/mylib.cpp'
+
+      - name: Assert action completed with specific targets
+        run: |
+          echo "PASS: cpplint action ran on specific file targets"

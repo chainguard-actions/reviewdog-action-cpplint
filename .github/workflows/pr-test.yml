@@ -1,0 +1,19 @@
+name: PR test
+on: [pull_request]
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: clone
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+    - uses: ./
+      with:
+        github_token: ${{ secrets.github_token }}
+        # reporter: github-pr-review
+        reporter: github-pr-check
+        flags: --linelength=50

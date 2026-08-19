@@ -1,4 +1,4 @@
-name: Test basic cpplint usage
+name: Test cpplint with additional reviewdog flags
 on:
   workflow_dispatch:
 jobs:
@@ -7,10 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Create a clean C++ file for linting
+      - name: Create a C++ file for linting
         run: |
-          mkdir -p tests/fixtures/cpp
-          cat > tests/fixtures/cpp/hello.cpp << 'EOF'
+          mkdir -p tests/fixtures/cpp-reviewdog
+          cat > tests/fixtures/cpp-reviewdog/main.cpp << 'EOF'
           // Copyright 2024 Test Author. All Rights Reserved.
           //
           // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ jobs:
           #include <iostream>
 
           int main() {
-            std::cout << "Hello, World!" << std::endl;
+            std::cout << "Hello" << std::endl;
             return 0;
           }
           EOF
@@ -38,9 +38,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: local
-          level: warning
-          targets: tests/fixtures/cpp/hello.cpp
+          level: info
+          reviewdog_flags: '-tee'
+          filter: '-legal/copyright,-build/include_order,-whitespace/indent'
+          targets: tests/fixtures/cpp-reviewdog/main.cpp
 
-      - name: Assert action completed successfully
+      - name: Assert action completed with reviewdog flags
         run: |
-          echo "PASS: cpplint action ran successfully"
+          echo "PASS: cpplint action ran with additional reviewdog flags"

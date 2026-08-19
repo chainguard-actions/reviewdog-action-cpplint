@@ -1,0 +1,34 @@
+name: Test cpplint with custom filter flags
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create a C++ file that would trigger some cpplint warnings
+        run: |
+          mkdir -p tests/fixtures/cpp-filter
+          cat > tests/fixtures/cpp-filter/sample.cpp << 'EOF'
+          #include <iostream>
+
+          int main() {
+            std::cout << "Hello" << std::endl;
+            return 0;
+          }
+          EOF
+
+      - id: action
+        uses: .
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: local
+          level: info
+          filter: '-build/include_order,-legal/copyright,-whitespace/indent'
+          flags: '--extensions=cpp'
+          targets: tests/fixtures/cpp-filter/sample.cpp
+
+      - name: Assert action completed with custom filter
+        run: |
+          echo "PASS: cpplint action ran with custom filter flags"

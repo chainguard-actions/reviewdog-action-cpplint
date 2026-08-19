@@ -1,0 +1,39 @@
+name: Reviewdog
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+    - uses: reviewdog/action-cpplint@e6b7ff83701666725925695a056a88f7f86f83e4 # master
+      with:
+        github_token: ${{ secrets.github_token }}
+        reporter: github-pr-review
+        flags: --linelength=50 # Optional
+        filter: "-readability/braces\
+          ,-whitespace/braces\
+          ,-whitespace/comments\
+          ,-whitespace/indent\
+          ,-whitespace/newline\
+          ,-whitespace/operators\
+          ,-whitespace/parens\
+          " # Optional
+  shellcheck:
+    name: runner / shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: shellcheck
+        uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review # Change reporter.
+          path: "." # Optional.
+          pattern: "*.sh" # Optional.
+          exclude: "./.git/*" # Optional.
+          shellcheck_flags: "--external-sources -e SC2086"
