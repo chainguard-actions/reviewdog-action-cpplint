@@ -8,6 +8,8 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| v1 | [`v1`](https://github.com/chainguard-actions/reviewdog-action-cpplint/tree/v1) | [`9552c62`](https://github.com/reviewdog/action-cpplint/commit/9552c62f4bd516c1e3a6f84eae56bd864cc304c6) |
+| v1.11 | [`v1.11`](https://github.com/chainguard-actions/reviewdog-action-cpplint/tree/v1.11) | [`9552c62`](https://github.com/reviewdog/action-cpplint/commit/9552c62f4bd516c1e3a6f84eae56bd864cc304c6) |
 | v1.11.0 | [`v1.11.0`](https://github.com/chainguard-actions/reviewdog-action-cpplint/tree/v1.11.0) | [`9552c62`](https://github.com/reviewdog/action-cpplint/commit/9552c62f4bd516c1e3a6f84eae56bd864cc304c6) |
 
 ## Privacy
