@@ -1,0 +1,26 @@
+name: Test filter input suppresses a category
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: local
+          reviewdog_flags: -fail-level=any
+          filter: -legal/copyright
+          targets: tests/fixtures/nocopyright/nocopyright.cc
+      - name: Assert action succeeded (copyright violation filtered out)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected success since -legal/copyright filter removes the only violation"
+            exit 1
+          fi
+          echo "PASS"
